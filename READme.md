@@ -121,6 +121,8 @@ Thanks to the hackathon organizers and the tools that made this project possible
 # TEAM MEMBERS
 **TEAM RATATOUILLE**
 
+👨‍🍳👩‍🍳
+
 Carter P.
 
 Danny H.
