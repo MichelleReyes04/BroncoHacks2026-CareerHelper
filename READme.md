@@ -115,3 +115,15 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your_key_here
 ## 🙏 Acknowledgments
 
 Thanks to the hackathon organizers and the tools that made this project possible.
+
+
+
+**TEAM MEMBERS**
+**TEAM RATATOUILLE**
+Carter P.
+
+Danny H.
+
+Michelle R.
+
+Ryan K.
