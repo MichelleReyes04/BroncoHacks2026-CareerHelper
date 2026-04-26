@@ -65,10 +65,19 @@ function AdviceSection({ section }) {
           if (line.startsWith("- ")) {
             const [label, ...rest] = line.replace(/^- /, "").split(":");
             const hasLabel = rest.length > 0 && label.length < 34;
+
             return (
               <p className="bullet-line" key={index}>
                 <span aria-hidden="true" />
-                <span>{hasLabel ? <><strong>{label}:</strong>{rest.join(":")}</> : line.replace(/^- /, "")}</span>
+                <span>
+                  {hasLabel ? (
+                    <>
+                      <strong className="bullet-label">{label}:</strong> {rest.join(":").trim()}
+                    </>
+                  ) : (
+                    line.replace(/^- /, "")
+                  )}
+                </span>
               </p>
             );
           }
@@ -87,12 +96,18 @@ function AppNav({ activePage, onNavigate, user, previewMode }) {
   ];
 
   return (
-    <header className="topbar">
-      <div className="topbar-identity">
-        <span className="topbar-brand">CareerHelper</span>
-        <span className="topbar-status">{previewMode ? "Preview mode" : `Signed in as ${user?.displayName || user?.email}`}</span>
+    <header className="topbar topbar-premium">
+      <div className="topbar-left">
+        <div className="brand-mark" aria-hidden="true">✦</div>
+        <div className="topbar-identity">
+          <span className="topbar-brand">CareerHelper</span>
+          <span className="topbar-status">
+            {previewMode ? "Preview mode" : `Signed in as ${user?.displayName || user?.email}`}
+          </span>
+        </div>
       </div>
-      <nav className="nav-tabs" aria-label="Main navigation">
+
+      <nav className="nav-tabs nav-tabs-premium" aria-label="Main navigation">
         {navItems.map((item) => (
           <button
             className={activePage === item.id ? "nav-tab active" : "nav-tab"}
@@ -104,13 +119,15 @@ function AppNav({ activePage, onNavigate, user, previewMode }) {
           </button>
         ))}
       </nav>
+
       {!previewMode && (
-        <button className="ghost-button" type="button" onClick={logOut}>Sign out</button>
+        <button className="ghost-button ghost-button-premium" type="button" onClick={logOut}>
+          Sign out
+        </button>
       )}
     </header>
   );
 }
-
 function HomePage({ user, historyCount, onStart, onDashboard }) {
   const firstName = user?.displayName?.split(" ")[0] || "there";
 
@@ -161,6 +178,24 @@ function AuthGate({ onAuthReady }) {
   const [authError, setAuthError] = useState("");
   const [authLoading, setAuthLoading] = useState(false);
 
+  const previewCards = [
+    {
+      title: "Hackathons",
+      tag: "Fast win",
+      description: "Find beginner-friendly events that help you build, ship, and talk about real work."
+    },
+    {
+      title: "Open Source",
+      tag: "Portfolio-ready",
+      description: "Discover contribution paths that strengthen Git, teamwork, and public proof of work."
+    },
+    {
+      title: "Research",
+      tag: "High signal",
+      description: "Explore lab-ready ideas and practical ways to turn your interests into guided technical work."
+    }
+  ];
+
   async function handleGoogleSignIn() {
     setAuthLoading(true);
     setAuthError("");
@@ -175,45 +210,132 @@ function AuthGate({ onAuthReady }) {
   }
 
   return (
-    <main className="auth-shell">
-      <section className="auth-hero">
-        <div className="auth-copy">
-          <p className="eyebrow">CareerHelper</p>
-          <h1>Sign in to build a career plan that turns into action.</h1>
-          <p>
-            Use Google to continue. After login, you will open the student profile workspace for career paths,
-            projects, hackathon ideas, research directions, and a focused weekly plan.
-          </p>
-        </div>
+    <main className="auth-shell auth-shell-premium">
+      <section className="auth-hero auth-hero-premium">
+        <div className="auth-copy auth-copy-premium">
+          <div className="landing-pill-row">
+            {["AI-Powered", "Student-First", "Beyond Internships"].map((item) => (
+              <span className="landing-pill" key={item}>{item}</span>
+            ))}
+          </div>
 
-        <div className="auth-card">
-          <div className="auth-card-header">
-            <div className="google-mark" aria-hidden="true">G</div>
-            <div>
-              <h2>Login or sign up</h2>
-              <p>One Google account is all you need.</p>
+          <p className="eyebrow">AI Career Copilot</p>
+          <h1>
+            Build your next career move with
+            <span className="gradient-text"> real next steps</span>, not vague advice.
+          </h1>
+          <p className="auth-subcopy">
+            CareerHelper helps students discover jobs, projects, hackathons, research directions,
+            and resume-ready actions based on their background, interests, and goals.
+          </p>
+
+          <div className="landing-actions">
+            <button
+              className="primary-button large-button hero-button"
+              type="button"
+              onClick={handleGoogleSignIn}
+              disabled={authLoading || !isFirebaseConfigured}
+            >
+              {authLoading ? "Opening Google..." : "Continue with Google"}
+            </button>
+
+            {!isFirebaseConfigured && (
+              <button
+                className="ghost-button large-button ghost-button-premium"
+                type="button"
+                onClick={onAuthReady}
+              >
+                Preview without auth
+              </button>
+            )}
+          </div>
+
+          <div className="landing-stats">
+            <div className="stat-card">
+              <strong>3x</strong>
+              <span>More ways to build experience</span>
+            </div>
+            <div className="stat-card">
+              <strong>AI</strong>
+              <span>Resume-aware recommendations</span>
+            </div>
+            <div className="stat-card">
+              <strong>Fast</strong>
+              <span>Clear next move in minutes</span>
             </div>
           </div>
 
-          <button className="google-button" type="button" onClick={handleGoogleSignIn} disabled={authLoading || !isFirebaseConfigured}>
-            <span className="google-icon" aria-hidden="true">G</span>
-            {authLoading ? "Opening Google..." : "Continue with Google"}
-          </button>
-
           {!isFirebaseConfigured && (
-            <div className="notice auth-notice">
-              Firebase is not configured yet. Add the required <code> VITE_FIREBASE_* </code> variables,
+            <div className="notice auth-notice auth-notice-premium">
+              Firebase is not configured yet. Add the required <code>VITE_FIREBASE_*</code> variables,
               restart the dev server, then sign in with Google.
             </div>
           )}
 
           {authError && <p className="error-message">{authError}</p>}
+        </div>
 
-          {!isFirebaseConfigured && (
-            <button className="text-button" type="button" onClick={onAuthReady}>
-              Preview without auth setup
-            </button>
-          )}
+        <div className="auth-preview-column">
+          <div className="preview-card preview-card-premium">
+            <div className="preview-header">
+              <div>
+                <p className="preview-label">AI CAREER PLAN</p>
+                <h3>Student Profile Analysis</h3>
+              </div>
+              <span className="preview-live">Live preview</span>
+            </div>
+
+            <div className="preview-block">
+              <p className="preview-mini-label">Profile Snapshot</p>
+              <div className="chip-row">
+                <span>Sophomore</span>
+                <span>CS Major</span>
+                <span>Interested in AI</span>
+                <span>No internship experience</span>
+              </div>
+            </div>
+
+            <div className="preview-highlight">
+              <p className="preview-mini-label">Recommended Next Step</p>
+              <p>
+                Build one beginner ML project, apply to two beginner-friendly hackathons,
+                and reach out to one campus research lab this month.
+              </p>
+            </div>
+
+            <div className="preview-grid">
+              <div className="preview-panel">
+                <p className="preview-mini-label">Best-fit opportunities</p>
+                <div className="preview-list">
+                  <div><span>AI Research Assistant</span><em>Strong fit</em></div>
+                  <div><span>Open Source ML Project</span><em>Strong fit</em></div>
+                  <div><span>Campus Tech Fellowship</span><em>Strong fit</em></div>
+                </div>
+              </div>
+
+              <div className="preview-panel">
+                <p className="preview-mini-label">Skill gaps</p>
+                <div className="preview-list vertical">
+                  <div><span>Python data workflows</span></div>
+                  <div><span>Model evaluation basics</span></div>
+                  <div><span>Git collaboration</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="mini-feature-grid">
+            {previewCards.map((card) => (
+              <article className="mini-feature-card" key={card.title}>
+                <div className="mini-feature-top">
+                  <span className="mini-feature-dot" aria-hidden="true" />
+                  <span className="mini-feature-tag">{card.tag}</span>
+                </div>
+                <h3>{card.title}</h3>
+                <p>{card.description}</p>
+              </article>
+            ))}
+          </div>
         </div>
       </section>
     </main>
